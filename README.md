@@ -83,11 +83,12 @@ An example: Let’s assume we were developing a process or a script to deploy ou
 To deploy a container on kubenetes and also view it run
 
 ```
-kubectl run nginx --image nginx
+kubectl run nginx --image=nginx
 kubectl get pods
+kubectl describe pod nginx
+kubectl delete pod nginx
 ```
-
-
+<img width="851" alt="Screen Shot 2022-11-23 at 9 25 12 PM" src="https://user-images.githubusercontent.com/74343792/203680483-293052a3-a4d4-42ff-9371-78aa056df7c6.png">
 
 
 
