@@ -53,9 +53,12 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docke
 sudo apt update
 sudo apt install docker-ce
 sudo systemctl status docker
+sudo usermod -aG docker ${USER}
 ```
+Now exit and ssh back into the server before you proceed.
 
-Instal kubectl
+
+Install kubectl
 ```
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
