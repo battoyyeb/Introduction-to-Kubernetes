@@ -114,6 +114,11 @@ Install crictl
 wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.25.0/crictl-v1.25.0-linux-amd64.tar.gz
 sudo tar zxvf crictl-v1.25.0-linux-amd64.tar.gz -C /usr/local/bin
 ```
+Run
+```
+minikube start --vm-driver=none
+```
+
 
 Create a networkoverlay
 ```
