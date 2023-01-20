@@ -166,6 +166,30 @@ kubectl delete pod nginx
 ```
 <img width="851" alt="Screen Shot 2022-11-23 at 9 25 12 PM" src="https://user-images.githubusercontent.com/74343792/203680483-293052a3-a4d4-42ff-9371-78aa056df7c6.png">
 
+## Run a Pod ##
+
+Create pod.yaml
+
+```
+vim pod.yaml
+```
+
+Paste
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+    tier: frontend
+spec: 
+  containers:
+  - name: nginx
+    image: nginx
+```
+
+![Screen Shot 2023-01-20 at 6 42 01 PM](https://user-images.githubusercontent.com/74343792/213824326-bba04fea-7a63-4c4e-8fb4-ec939c91eb00.png)
 
 
 
