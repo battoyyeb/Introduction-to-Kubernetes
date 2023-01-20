@@ -189,7 +189,8 @@ spec:
     image: nginx
 ```
 
-![Screen Shot 2023-01-20 at 6 42 01 PM](https://user-images.githubusercontent.com/74343792/213824326-bba04fea-7a63-4c4e-8fb4-ec939c91eb00.png)
+![Screen Shot 2023-01-20 at 6 46 46 PM](https://user-images.githubusercontent.com/74343792/213824669-6c0e6eb1-c108-4b62-9375-8545364bbf74.png)
+
 
 
 
