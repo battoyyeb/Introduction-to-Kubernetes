@@ -197,6 +197,11 @@ kubectl describe pod nginx
 
 ![Screen Shot 2023-01-20 at 6 46 46 PM](https://user-images.githubusercontent.com/74343792/213824669-6c0e6eb1-c108-4b62-9375-8545364bbf74.png)
 
+Run  the following commnad to delete
+
+```
+kubectl delete pods <name>
+```
 
 ## Replication controller
 
@@ -217,4 +222,76 @@ kubectl delete replicaset myapp-replicaset  -  to delete the replicaset.
 kubectl replace -f replicaset-definition.yml - to replace or update replicaset
 kubectl scale –replicas=6 -f replicaset-definition.yml  -  to scale the replicas simply from the command line without having to modify the file
 ```
+
+Make a directory for pods and replicasets
+
+```
+mkdir pods
+mkdir replicasets
+```
+
+In the pods directory, create a yaml file for nginx.
+
+```
+vim nginx.yaml
+```
+
+Paste the code below
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-2
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+```
+
+In the replicasets directory, create a replicaset file
+
+```
+vim replicaset
+```
+
+Paste the code below
+```
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+    app: myapp
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-2
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+ ```
+ 
+ Run 
+ 
+ ```
+ kubectl create -f replicaset.yaml
+ kubectl get replicaset
+ kubectl get pods
+ ```
+ 
+ ![Screen Shot 2023-01-20 at 8 49 52 PM](https://user-images.githubusercontent.com/74343792/213835707-ec33d71b-1d46-40b4-91f6-c51ebefe8c90.png)
+
+Try to create a pod that has the same label as the replica set, and you will notice it won't add it to the number of pods running becase our replicaset has been set to 3. Also try to delete one of the pods and it aill automatically create a new pod.
+
+![Screen Shot 2023-01-20 at 9 03 04 PM](https://user-images.githubusercontent.com/74343792/213837268-c4f7569d-4261-469a-acaf-feb5191b2187.png)
+
 
