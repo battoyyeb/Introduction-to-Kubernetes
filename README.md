@@ -166,7 +166,7 @@ kubectl delete pod nginx
 ```
 <img width="851" alt="Screen Shot 2022-11-23 at 9 25 12 PM" src="https://user-images.githubusercontent.com/74343792/203680483-293052a3-a4d4-42ff-9371-78aa056df7c6.png">
 
-## Run a Pod ##
+## Run a Pod 
 
 Create pod.yaml
 
@@ -198,18 +198,23 @@ kubectl describe pod nginx
 ![Screen Shot 2023-01-20 at 6 46 46 PM](https://user-images.githubusercontent.com/74343792/213824669-6c0e6eb1-c108-4b62-9375-8545364bbf74.png)
 
 
+## Replication controller
+
+Controllers are the brain behind Kubernetes. They are processes that monitor kubernetes objects and respond accordingly. Let us talk about the replication controller
+
+What if for some reason, our application crashes and the POD fails? Users will no longer be able to access our application. To prevent users from losing access to our application, we would like to have more than one instance or POD running at the same time. That way if one fails we still have our application running on the other one. The replication controller helps us run multiple instances of a single POD in the kubernetes cluster thus providing High Availability. So does that mean you can’t use a replication controller if you plan to have a single POD? No! Even if you have a single POD, the replication controller can help by automatically bringing up a new POD when the existing one fails. Thusthe replication controller ensures that the specified number of PODs are running at all times. Even if it’s just 1 or 100.
 
 
+Another reason we need replication controller is to create multiple PODs to share the load across them. For example, in this simple scenario we have a single POD serving a set of users. When the number of users increase we deploy additional POD to balance the load across the two pods. If the demand further increases and If we were to run out of resources on the first node, we could deploy additional PODs across other nodes in the cluster. As you can see, the replication controller spans across multiple nodes in the cluster. It helps us balance the load across multiple pods on different nodes as well as scale our application when the demand increases.
 
+The replication controller and Replica set are the same with everything said above. But there are minor difference in the way each of them works. 
+The main difference is the selector. It is anly required in ReplicaSet. The The selector section helps the replicaset identify what pods fall under it i.e replica set can ALSO manage pods that were not created as part of the eplicaset creation. Say for example, there were pods created BEFORE the creation of the ReplicaSet that match the labels specified in the selector, the replica set will also take THOSE pods into consideration when creating the replicas.
 
-
-
-
-
-
-
-
-
-
-
+```
+kubectl create -f replicaset-definition.yml  - used to create a replca set
+kubectl get replicaset  - to see list of replicasets created
+kubectl delete replicaset myapp-replicaset  -  to delete the replicaset.
+kubectl replace -f replicaset-definition.yml - to replace or update replicaset
+kubectl scale –replicas=6 -f replicaset-definition.yml  -  to scale the replicas simply from the command line without having to modify the file
+```
 
