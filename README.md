@@ -465,3 +465,67 @@ For Loadbalancer
 ![Screen Shot 2023-01-21 at 5 23 24 PM](https://user-images.githubusercontent.com/74343792/213889339-17a7b40d-f0af-4cf5-8435-dcf5d58bb0bc.png)
 
 
+## Practical Example
+
+![Screen Shot 2023-01-21 at 5 45 50 PM](https://user-images.githubusercontent.com/74343792/213890132-6cc7b41c-e598-41af-983d-de26b867cc47.png)
+
+First remove the directories, pods, deployments, replicasets, service
+
+```
+sudo rm -r pods deployments replicasets service
+```
+
+Create a folder called voting-app and cd into it.
+
+```
+mkdir voting-app
+```
+
+Create a voting-app-pod.yaml file and paste the code below.
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: voting-app-pod
+  labels:
+    name: voting-app-pod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: voting-app
+    image: kodekloud/examplevotingapp_vote:v1
+    ports:
+      - containerPort: 80
+```
+
+Create a result-app-pod.yaml file and paste the code below.
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: result-app-pod
+  labels:
+    name: result-app-pod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: result-app
+    image: kodekloud/examplevotingapp_result:v1
+    ports:
+      - containerPort: 80
+```
+
+![Screen Shot 2023-01-21 at 6 03 23 PM](https://user-images.githubusercontent.com/74343792/213890486-dbd603cf-a13c-40d4-b190-a784176d97f3.png)
+
+
+
+
+
+
+
+
+
+
+
