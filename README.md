@@ -294,4 +294,139 @@ Try to create a pod that has the same label as the replica set, and you will not
 
 ![Screen Shot 2023-01-20 at 9 03 04 PM](https://user-images.githubusercontent.com/74343792/213837268-c4f7569d-4261-469a-acaf-feb5191b2187.png)
 
+Change the number of replicasets from 3 to 4.
+
+![Screen Shot 2023-01-20 at 9 07 03 PM](https://user-images.githubusercontent.com/74343792/213838252-83330e4b-c4df-49ea-b70d-d54845edf129.png)
+
+To delete the rplicaset, use this command
+```
+kubectl delete replicaset myapp-replicaset
+```
+
+
+## Kubenetes Deployments
+
+Say for example you have a web server that needs to be deployed in a production environment. You need not ONE, but many such instances of the web
+server running for obvious reasons. Secondly, when newer versions of application builds become available on the docker registry, you would like to UPGRADE your docker instances seamlessly. However, when you upgrade your instances, you do not want to upgrade all of them at once as we just did. This may impact users accessing our applications, so you may want to upgrade them one after the other. And that kind of upgrade is known as Rolling Updates. Suppose one of the upgrades you performed resulted in an unexpected error and you are asked to undo the recent update. You would like to be able to rollback the changes that were recently carried out. Finally,say for example you would like to make multiple changes to your environment such as upgrading the underlying WebServer versions, as well as scaling your environment and also modifying the resource allocations etc. You do not want to apply each change immediately after the command is run, instead you would like to apply a pause to your environment, make the changes and then resume so that all changes are rolled-out together. All of these capabilities are available with the kubernetes Deployments.
+
+Create a new directory called deolyments
+
+```
+mkdir deployments
+```
+
+Create a deployment.yaml file
+
+```
+vim deployment.yaml
+```
+
+Paste the following code
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+    tier: frontend
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-2
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+
+Run
+```
+kubectl create -f deployment.yaml
+kubectl get deployments
+kubectl get pods
+
+or 
+
+kubectl get all
+
+kubectl describe deployment myapp-deployment
+```
+
+To delete
+```
+kubectl delete deploy myapp-deployment
+```
+
+![Screen Shot 2023-01-20 at 9 54 56 PM](https://user-images.githubusercontent.com/74343792/213840723-044373b7-67b7-4126-bcce-da3093aba03b.png)
+
+Whenever you create a new deployment or upgrade the images in an existing deployment it triggers a Rollout. A rollout is the process of gradually deploying or upgrading your application containers. When you first create a deployment, it triggers a rollout. A new rollout creates a new Deployment revision. Let’s call it revision 1. In the future when the application is upgraded – meaning when the container version is updated to a new one – a new rollout is triggered and a new deployment revision is created named Revision 2. This helps us keep track of the changes made to our deployment and enables us to rollback to a previous version of deployment if necessary.
+
+
+Change the number of replicas to 6.
+
+Run
+```
+kubectl create -f deployment.yaml --record
+kubectl rollout status deployment.apps/myapp-deployment
+kubectl rollout history deployment.apps/myapp-deployment
+kubectl describe deployment myapp-deployment
+kubectl get pods
+```
+
+![Screen Shot 2023-01-20 at 10 14 02 PM](https://user-images.githubusercontent.com/74343792/213841234-b2edcb22-0423-4cc2-bc88-eb81e0d2cb94.png)
+
+
+Now let us try to make a change to the deployments. In the deployment.yaml file, change the nginx in container section to nginx:1.18
+
+![Screen Shot 2023-01-20 at 10 25 23 PM](https://user-images.githubusercontent.com/74343792/213841553-076028c6-c743-41ef-9aeb-367c9c1dc79c.png)
+
+![Screen Shot 2023-01-20 at 10 25 40 PM](https://user-images.githubusercontent.com/74343792/213841559-3db61af3-7708-449a-9a30-cc9f0bb5d769.png)
+
+To undo a rollout, run
+
+```
+kubectl rollout undo deployment/myapp-deployment
+```
+
+## Kubernetes Networking
+
+Let us look at the very basics of networking in Kubernetes. We will start with a single node kubernetes cluster. The node has an IP address, say it is 192.168.1.2 in this case. This is the IP address we use to access the kubernetes node, SSH into it etc. On a side note, remember if you are using a MiniKube setup, then I am talking about the IP address of the minikube virtual machine inside your Hypervisor. Your laptop may be having a different IP like 192.168.1.10. So its important to understand how VMs are setup. So on the single node kubernetes cluster we have created a Single POD. As you know a POD hosts a container. Unlike in the docker world were an IP address is always assigned to a Docker CONTAINER, in Kubernetes the IP address is assigned to a POD. Each POD in kubernetes gets its own internal IP Address. In this case its in the range 10.244 series and the IP assigned to the POD is 10.244.0.2. So how is it getting this IP address? When Kubernetes is initially configured it creates an internal private network with the address 10.244.0.0 and all PODs are attached to it. When you deploy multiple PODs, they all get a separate IP assigned. The PODs can communicate to each other through this IP. But accessing other PODs using this internal IP address MAY not be a good idea as its subject to change when PODs are recreated. We will see BETTER ways to establish communication between PODs in a while. For now its important to understand how the internal networking works in kubernetes.
+
+So it’s all easy and simple to understand when it comes to networking on a single node. But how does it work when you have multiple nodes in a cluster? In this case we have two nodes running kubernetes and they have IP addresses 192.168.1.2 and 192.168.1.3 assigned to them. Note that they are not part of the same cluster yet. Each of them has a single POD deployed. As discussed in the previous slide these pods are attached to an internal network and they have their own IP addresses assigned. HOWEVER, if you look at the network addresses, you can see that they are the same. The two networks have an address 10.244.0.0 and the PODs deployed have the same address too. This is NOT going to work well when the nodes are part of the same cluster. The PODs have the same IP addresses assigned to them and that will lead to IP conflicts in the network. Now that’s ONE problem. When a kubernetes cluster is SETUP, kubernetes does NOT automatically setup any kind of networking to handle these issues. As a matter of fact, kubernetes expects US to setup networking to meet certain fundamental requirements. Some of these are that all the containers or PODs in a kubernetes cluster MUST be able to communicate with one another without having to configure NAT. All nodes must be able to communicate with containers and all containers must be able to communicate with the nodes in the cluster. Kubernetes expects US to setup a networking solution that meets these criteria.
+
+Fortunately, we don’t have to set it up ALL on our own as there are multiple pre-built solutions available. Some of them are the cisco ACI networks, Cilium, Big Cloud Fabric, Flannel, Vmware NSX-t and Calico. Depending on the platform you are deploying your Kubernetes cluster on you may use any of these solutions. For example, if you were setting up a kubernetes cluster from scratch on your own systems, you may use any of these solutions like Calico, Flannel etc. If you were deploying on a Vmware environment NSX-T may be a good option. If you look at the play-with-k8s labs they use WeaveNet. In our demos in the course we used Calico. Depending on your environment and after evaluating the Pros and Cons of each of these, you may chose the right networking solution.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
