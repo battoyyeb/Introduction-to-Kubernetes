@@ -405,14 +405,17 @@ So it’s all easy and simple to understand when it comes to networking on a sin
 Fortunately, we don’t have to set it up ALL on our own as there are multiple pre-built solutions available. Some of them are the cisco ACI networks, Cilium, Big Cloud Fabric, Flannel, Vmware NSX-t and Calico. Depending on the platform you are deploying your Kubernetes cluster on you may use any of these solutions. For example, if you were setting up a kubernetes cluster from scratch on your own systems, you may use any of these solutions like Calico, Flannel etc. If you were deploying on a Vmware environment NSX-T may be a good option. If you look at the play-with-k8s labs they use WeaveNet. In our demos in the course we used Calico. Depending on your environment and after evaluating the Pros and Cons of each of these, you may chose the right networking solution.
 
 
+## Kubernetes Services
 
+Kubernetes Services enable communication between various components within and outside of the application. Kubernetes Services helps us connect applications together with other applications or users. For example, our application has groups of PODs running various sections, such as a group for serving front-end load to users, another group running back-end processes, and a third group connecting to an external data source. It is Services that enable connectivity between these groups of PODs. Services enable the front-end application to be made available to users, it helps communication between back-end and front-end PODs, and helps in establishing connectivity to an external data source. Thus services enable loose coupling between microservices in our application.
 
+The kubernetes service is an object just like PODs, Replicaset or Deploymentsthat we worked with before. One of its use case is to listen to a port on the Node and forward requests on that port to a port on the POD running the web application. This type of service is known as a NodePort service because the service listens to a port on the Node and forwards requests to PODs. 
 
+The three types of services are NodePort. ClusterIp and Loadbalancer. NodePort were the service makes an internal POD accessible on a Port on the Node. The second is ClusterIP – and in this case the service creates a virtual IP inside the cluster to enable communication between different services such as a set of front-end servers to a set of backendservers. The third type is a LoadBalancer, were it provisions a load balancer for our service in supported cloud providers.
 
+![Screen Shot 2023-01-21 at 4 25 46 PM](https://user-images.githubusercontent.com/74343792/213887715-2e353de0-e2ae-4bad-b03e-b0de2bbc5ad1.png)
 
-
-
-
+![Screen Shot 2023-01-21 at 4 26 09 PM](https://user-images.githubusercontent.com/74343792/213887719-5dc1756a-8a90-46a8-be01-169a395c5142.png)
 
 
 
