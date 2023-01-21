@@ -520,12 +520,66 @@ spec:
 ![Screen Shot 2023-01-21 at 6 03 23 PM](https://user-images.githubusercontent.com/74343792/213890486-dbd603cf-a13c-40d4-b190-a784176d97f3.png)
 
 
+Create a redis-pod.yaml file and paste the code below.
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-pod
+  labels:
+    name: redis-pod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: redis
+    image: redis
+    ports:
+      - containerPort: 6379 
+```
 
 
+Create a postgres-pod.yaml file and paste the code below.
 
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-pod
+  labels:
+    name: postgres-pod
+    app: demo-voting-app
+spec:
+  containers:
+    - name: postgres
+      image: postgres
+      ports:
+        - containerPort: 5432
+  env:
+    - name: POSTGRES_USER
+      value: "postgres"
+    - name: POSTGRES_PASSWORD
+      value: "postgres"
+```
 
+Create a worker-app-pod.yaml file and paste the code below.
 
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: worker-app-pod
+  labels:
+    name: worker-app-pod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: worker-app
+    image: kodekloud/examplevotingapp_worker:v1
+```
 
+![Screen Shot 2023-01-21 at 6 14 39 PM](https://user-images.githubusercontent.com/74343792/213892613-0ad112f6-01b9-4b4d-9ffc-7d9e5699151c.png)
 
+![Screen Shot 2023-01-21 at 6 14 27 PM](https://user-images.githubusercontent.com/74343792/213892640-d47b76f7-8870-4426-9e50-b80887c4a8e3.png)
 
-
+![Screen Shot 2023-01-21 at 6 20 28 PM](https://user-images.githubusercontent.com/74343792/213893829-5ce1135b-7cbb-4c92-81c9-3e800574c721.png)
