@@ -188,6 +188,12 @@ spec:
   - name: nginx
     image: nginx
 ```
+Run
+```
+kubectl apply -f pod.yaml
+kubectl get pods
+kubectl describe pod nginx
+```
 
 ![Screen Shot 2023-01-20 at 6 46 46 PM](https://user-images.githubusercontent.com/74343792/213824669-6c0e6eb1-c108-4b62-9375-8545364bbf74.png)
 
