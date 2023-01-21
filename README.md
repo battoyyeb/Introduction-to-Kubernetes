@@ -420,18 +420,48 @@ The three types of services are NodePort. ClusterIp and Loadbalancer. NodePort w
 ![Screen Shot 2023-01-21 at 4 26 09 PM](https://user-images.githubusercontent.com/74343792/213887719-5dc1756a-8a90-46a8-be01-169a395c5142.png)
 
 
+Make a service directory and make a service-definition.yaml file
 
+```
+mkdir service
+vim service-definition.yaml
+```
 
+Paste the code below
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30004
+  selector:
+    app: myapp
+```
 
+Run
+```
+kubectl create -f service-definition.yaml
+kubectl get svc
+minikube service myapp-service --url
+```
 
+On your browser, your url is publicip:300004
 
+![Screen Shot 2023-01-21 at 5 14 38 PM](https://user-images.githubusercontent.com/74343792/213889042-75853481-0541-461b-a7a0-2e836a2f5f29.png)
 
+<img width="932" alt="Screen Shot 2023-01-21 at 5 14 46 PM" src="https://user-images.githubusercontent.com/74343792/213889213-90bf901a-c9f4-4c77-abe8-4cc0819e9ad6.png">
 
+Fpr Cluster IP
 
+![Screen Shot 2023-01-21 at 5 19 57 PM](https://user-images.githubusercontent.com/74343792/213889202-e82d145c-1e4e-4708-859e-ab5e88114fe6.png)
 
+For Loadbalancer
 
-
-
-
+![Screen Shot 2023-01-21 at 5 23 24 PM](https://user-images.githubusercontent.com/74343792/213889339-17a7b40d-f0af-4cf5-8435-dcf5d58bb0bc.png)
 
 
