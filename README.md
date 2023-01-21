@@ -120,6 +120,8 @@ sudo tar zxvf crictl-v1.25.0-linux-amd64.tar.gz -C /usr/local/bin
 Run
 ```
 minikube start --vm-driver=none
+kubectl get nodes
+kubectl get po -A
 ```
 
 
