@@ -469,6 +469,8 @@ For Loadbalancer
 
 ![Screen Shot 2023-01-21 at 5 45 50 PM](https://user-images.githubusercontent.com/74343792/213890132-6cc7b41c-e598-41af-983d-de26b867cc47.png)
 
+![Screen Shot 2023-01-21 at 6 39 04 PM](https://user-images.githubusercontent.com/74343792/213894273-f43367a1-34c6-4761-b4d5-8ddf2af68c22.png)
+
 First remove the directories, pods, deployments, replicasets, service
 
 ```
@@ -555,11 +557,11 @@ spec:
       image: postgres
       ports:
         - containerPort: 5432
-  env:
-    - name: POSTGRES_USER
-      value: "postgres"
-    - name: POSTGRES_PASSWORD
-      value: "postgres"
+      env:
+      - name: POSTGRES_USER
+        value: "postgres"
+      - name: POSTGRES_PASSWORD
+        value: "postgres"
 ```
 
 Create a worker-app-pod.yaml file and paste the code below.
@@ -583,3 +585,125 @@ spec:
 ![Screen Shot 2023-01-21 at 6 14 27 PM](https://user-images.githubusercontent.com/74343792/213892640-d47b76f7-8870-4426-9e50-b80887c4a8e3.png)
 
 ![Screen Shot 2023-01-21 at 6 20 28 PM](https://user-images.githubusercontent.com/74343792/213893829-5ce1135b-7cbb-4c92-81c9-3e800574c721.png)
+
+
+Let us create service
+
+Create a redis-service.yaml file and paste the code below.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    name: redis-service
+    app: demo-voting-app
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    name: redis-pod
+    app: demo-voting-app
+```
+
+Create a postgres-service.yaml file and paste the code below.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    name: postgres-service
+    app: demo-voting-app
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    name: postgres-pod
+    app: demo-voting-app
+```
+
+Create a voting-app-service.yaml file and paste the code below.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-service
+  labels:
+    name: voting-service
+    app: demo-voting-app
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30004
+  selector:
+    name: voting-app-pod
+    app: demo-voting-app
+```
+
+
+
+Create a result-app-service.yaml file and paste the code below.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: result-service
+  labels:
+    name: result-service
+    app: demo-voting-app
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30005
+  selector:
+    name: result-app-pod
+    app: demo-voting-app
+```
+
+![Screen Shot 2023-01-21 at 6 30 13 PM](https://user-images.githubusercontent.com/74343792/213894245-ce928164-6e95-4eba-9cf0-6fbdb48fa0e0.png)
+
+![Screen Shot 2023-01-21 at 6 38 15 PM](https://user-images.githubusercontent.com/74343792/213894251-dcda1331-4d2f-4795-b7b5-be66771f30de.png)
+
+We are done with the files creation.
+
+Run
+
+```
+kubectl create -f voting-app-pod.yaml
+kubectl create -f voting-app-service.yaml
+kubectl create -f redis-pod.yaml
+kubectl create -f redis-service.yaml
+kubectl create -f postgres-pod.yaml
+kubectl create -f postgres-service.yaml
+kubectl create -f worker-app-pod.yaml
+kubectl create -f result-app-pod.yaml
+kubectl create -f result-app-service.yaml
+
+kubectl get pods,svc
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
