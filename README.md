@@ -720,8 +720,14 @@ kubectl scale deployment voting-app-deploy --replicas=3
 
 
 
+# Creating kubernetes using kubeadm
 
+System Requirements
 
+Master: t2.medium (2 CPUs and 2GB Memory)
+Worker Nodes: t2.micro
+
+On AWS search for CentOS and create t2.medium and t2.micro
 
 
 
