@@ -5,6 +5,26 @@ application relies on other containers such as database or messaging services or
 
 There are various advantages of container orchestration. Your application is now highly available as hardware failures do not bring your application down because you have multiple instances of your application running on different nodes. The user traffic is load balanced across the various containers. When demand increases, deploy more instances of the application seamlessly and within a matter of second and we have the ability to do that at a service level. When we run out of hardware resources, scale the number of nodes up/down without having to take down the application. And do all of these easily with a set of declarative object configuration files.
 
+## Kubernetes Setup Methods 
+
+
+### Learning Setup: 
+1. Minikube
+1. Kind
+
+### Producton Setup: 
+
+1. kubeadm
+1. kops ( Works for only AWS)
+1. Kubespray
+
+
+### Kubernetes As a Service
+
+1. AKS - Azure Kubernetes Services
+1. EKS - Elastic Kubernetes Service 
+1. GKE - Google Kubernetes Engine 
+
 ## Basic Concept of Kubernetes
 
 Before we head into setting up a kubernetes cluster, it is important to understand some of the basic concepts. This is to make sense of the terms that we will come across while setting up a kubernetes cluster. 
