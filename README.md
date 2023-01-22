@@ -693,12 +693,30 @@ kubectl create -f result-app-service.yaml
 kubectl get pods,svc
 ```
 
+Pod is not not a good idea to deploy applications. Use deployments instead.
+Here is the link to the deployment files: (https://github.com/battoyyeb/example-voting-app-kubernetes.git)
 
+Run
 
+```
+kubectl create -f voting-app-deploy.yaml
+kubectl create -f voting-app-service.yaml
+kubectl create -f redis-deploy.yaml
+kubectl create -f redis-service.yaml
+kubectl create -f postgres-deploy.yaml
+kubectl create -f postgres-service.yaml
+kubectl create -f worker-app-deploy.yaml
+kubectl create -f result-app-deploy.yaml
+kubectl create -f result-app-service.yaml
 
+kubectl get pods,svc
+```
 
+Use this command to scale the voting app to 3
 
-
+```
+kubectl scale deployment voting-app-deploy --replicas=3
+```
 
 
 
