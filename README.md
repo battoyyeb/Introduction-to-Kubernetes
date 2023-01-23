@@ -153,17 +153,23 @@ sudo tar zxvf crictl-v1.25.0-linux-amd64.tar.gz -C /usr/local/bin
 Run
 ```
 minikube start --vm-driver=none
+
+or 
+
+minikube start --vm-driver=none --network-plugin=cni --cni=calico
+```
+
+```
 kubectl get nodes
 kubectl get po -A
 ```
 
 
-Create a networkoverlay
+
+You will notice there the status is not ready. We will be using weavenet as our Container Network Interface (CNI) plugins to manage their network and security capabilities
+
 ```
-curl https://docs.projectcalico.org/manifests/calico.yaml -O
-kubectl apply -f calico.yaml
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-kubectl -n kube-system apply -f https://raw.githubusercontent.com/coreos/flannel/bc79dd1505b0c8681ece4de4c0d86c5cd2643275/Documentation/kube-flannel.yml
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
 ```
 
 
@@ -760,7 +766,130 @@ System Requirements
 Master: t2.medium (2 CPUs and 2GB Memory)
 Worker Nodes: t2.micro
 
-On AWS search for CentOS and create t2.medium and t2.micro
+Create one t2.medium and two t2.micro Ubuntu server.
+
+
+On All the Nodes run to check the br_netfilter, overlay.
+```
+lsmod | grep br_netfilter
+lsmod | grep overlay
+```
+![Screen Shot 2023-01-22 at 7 37 40 PM](https://user-images.githubusercontent.com/74343792/213949226-5111ee8d-e9e5-4ae1-86c2-d229806389f9.png)
+
+This show no result because it is not loaded. To load it, we need to run the following command below
+
+```
+sudo modprobe overlay
+sudo modprobe br_netfilter
+```
+
+![Screen Shot 2023-01-22 at 7 41 10 PM](https://user-images.githubusercontent.com/74343792/213949374-b36b9690-511c-4887-b6d7-aa099f24d111.png)
+
+Run this command to create a new kernel parameters.
+
+```
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+sudo sysctl --system
+```
+
+Install a runtime
+
+Install Docker
+```
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce
+sudo systemctl status docker
+sudo usermod -aG docker ${USER}
+```
+Now exit and ssh back into the server before you proceed.
+
+Install cri-dockerd
+```
+git clone https://github.com/Mirantis/cri-dockerd.git
+wget https://storage.googleapis.com/golang/getgo/installer_linux
+chmod +x ./installer_linux
+./installer_linux
+source ~/.bash_profile
+
+cd cri-dockerd
+mkdir bin
+go build -o bin/cri-dockerd
+mkdir -p /usr/local/bin
+sudo install -o root -g root -m 0755 bin/cri-dockerd /usr/local/bin/cri-dockerd
+sudo cp -a packaging/systemd/* /etc/systemd/system
+sudo sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+sudo systemctl daemon-reload
+sudo systemctl enable cri-docker.service
+sudo systemctl enable --now cri-docker.socket
+```
+
+Installing kubeadm, kubelet and kubectl
+```
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+```
+
+Configure the kubeadm cluster. On the Master node run
+
+```
+sudo kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=<Masternode-private-ip> --cri-socket=unix:///var/run/cri-dockerd.sock
+```
+
+Now run
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+Now deploy a pod network to the master.
+
+Run
+```
+kubectl get nodes
+```
+
+You will notice there the status is not ready. We will be using weavenet as our Container Network Interface (CNI) plugins to manage their network and security capabilities
+
+```
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+```
+
+![Screen Shot 2023-01-22 at 8 42 19 PM](https://user-images.githubusercontent.com/74343792/213953078-f9d94819-a490-4e25-b860-c8231e8116ea.png)
+
+
+On the 2 worker nodes run the kube join command (Remember to edit and add the --cri-socket)
+
+![Screen Shot 2023-01-22 at 8 37 27 PM](https://user-images.githubusercontent.com/74343792/213953070-a526c63d-faf9-43bd-9a8e-8b38b3615cf4.png)
+
+```
+sudo kubeadm join 172.31.15.34:6443 --cri-socket=unix:///var/run/cri-dockerd.sock --token bq1r1k.9qs394lt7u90kfjx \
+        --discovery-token-ca-cert-hash sha256:ee4dfc99153bd3c966166d4ea301e1e2567e6592aad1ab035db67bee43dde4fd
+```
+
+![Screen Shot 2023-01-22 at 8 48 46 PM](https://user-images.githubusercontent.com/74343792/213953525-1678ecba-1564-4f05-ad50-0ef54dfa6d38.png)
+
+On your MasterNode, 
+
+Run
+```
+kubectl get nodes
+```
+
+![Screen Shot 2023-01-22 at 8 50 55 PM](https://user-images.githubusercontent.com/74343792/213953672-1c190128-dd73-44f4-af17-f0b08db0565e.png)
 
 
 
