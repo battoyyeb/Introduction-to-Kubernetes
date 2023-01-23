@@ -73,7 +73,7 @@ The worker node (or minion) as it is also known, is were the containers are host
 The master server has the kube-apiserver and that is what makes it a master. All the information gathered are stored in a key-value store on the Master. The key value store is based on the popular etcd framework as we just discussed. The master also has the controller manager and the scheduler. There are other components as well, but we will stop there for now. The reason we went through this is to understand what components constitute the master and worker nodes. This will help us install and configure the right components on different systems when we setup our infrastructure.
 
 
-## Kubectl
+### Learning Setup: Minikube
 
 The kube control tool is used to deploy and manage applications on a kubernetes cluster, to get cluster information, get the status of nodes in the cluster and many other things. The kubectl run command is used to deploy an application on the cluster. The kubectl cluster-info command is used to view information about the cluster and the kubectl get pod command is used to list all the nodes part of the cluster.
 
@@ -759,7 +759,7 @@ kubectl scale deployment voting-app-deploy --replicas=3
 
 
 
-# Creating kubernetes using kubeadm
+### Producton Setup: kubeadm
 
 System Requirements
 
@@ -893,3 +893,4 @@ kubectl get nodes
 
 
 
+### Kubernetes As a Service (EKS - Elastic Kubernetes Service)
