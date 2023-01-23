@@ -49,9 +49,22 @@ The scheduler is responsible for distributing work or containers across multiple
 
 The controllers are the brain behind orchestration. They are responsible for noticing and responding when nodes, containers or endpoints goes down. The controllers makes decisions to bring up new containers in such cases.
 
+These controllers include:
+
+`Node controller:` Responsible for noticing and responding when nodes go down.  
+`Replication controller:` Responsible for maintaining the correct number of pods for every replication controller object in the system.  
+`Endpoints controller:` Populates the Endpoints object (that is, joins Services & Pods).  
+`Service Account & Token controllers:` Create default accounts and API access tokens for new namespaces.
+
 The container runtime is the underlying software that is used to run containers. In our case it happens to be Docker.
 
 And finally kubelet is the agent that runs on each node in the cluster. The agent is responsible for making sure that the containers are running on the nodes asexpected.
+
+Others
+
+kube-proxy 
+  kube-proxy is a network proxy that runs on each node in your cluster, implementing part of the Kubernetes Service concept.  
+  kube-proxy maintains network rules on nodes. These network rules allow network communication to your Pods from network sessions inside or outside of your cluster
 
 ## Master and Worker node Concept
 
