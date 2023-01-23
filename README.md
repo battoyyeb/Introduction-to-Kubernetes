@@ -894,3 +894,81 @@ kubectl get nodes
 
 
 ### Kubernetes As a Service (EKS - Elastic Kubernetes Service)
+
+Create a t2.micro Ubuntu server on AWS.
+
+Install kubectl
+```
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+chmod +x kubectl
+mkdir -p ~/.local/bin
+mv ./kubectl ~/.local/bin/kubectl
+```
+
+Setup eksctl
+
+```
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+```
+
+Create an IAM Role and attache it to EC2 instance.
+
+Select AWS Service
+Use case is EC2
+Search for: IAMfullaccess, AWSCloudFormationFullAccess, AmazonVPCFullAccess, AmazonEC2FullAccess, AdministratorAccess.
+Add name for the role.
+Click create role.
+
+![Screen Shot 2023-01-22 at 9 24 36 PM](https://user-images.githubusercontent.com/74343792/213956123-05b9b99c-63c0-43e0-ae6c-5b3399f0f8c3.png)
+![Screen Shot 2023-01-22 at 9 23 59 PM](https://user-images.githubusercontent.com/74343792/213956132-6c235056-7dc9-4224-9824-6bf61580fb65.png)
+
+Attach the role to EC2 instance.
+
+![Screen Shot 2023-01-22 at 9 27 26 PM](https://user-images.githubusercontent.com/74343792/213956322-62363a83-50c6-4da9-a709-244e9fc7d7f0.png)
+![Screen Shot 2023-01-22 at 9 27 40 PM](https://user-images.githubusercontent.com/74343792/213956335-01fa9260-9e75-4256-a93f-348588cfed72.png)
+
+
+Create your cluster and nodes
+```
+eksctl create cluster --name BATTOYYEB  \
+--region us-east-1 \
+--node-type t2.small \
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
