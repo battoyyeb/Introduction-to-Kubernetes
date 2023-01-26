@@ -452,7 +452,7 @@ Kubernetes Services enable communication between various components within and o
 
 The kubernetes service is an object just like PODs, Replicaset or Deploymentsthat we worked with before. One of its use case is to listen to a port on the Node and forward requests on that port to a port on the POD running the web application. This type of service is known as a NodePort service because the service listens to a port on the Node and forwards requests to PODs. 
 
-The three types of services are NodePort. ClusterIp and Loadbalancer. NodePort were the service makes an internal POD accessible on a Port on the Node. The second is ClusterIP – and in this case the service creates a virtual IP inside the cluster to enable communication between different services such as a set of front-end servers to a set of backendservers. The third type is a LoadBalancer, were it provisions a load balancer for our service in supported cloud providers.
+The three types of services are NodePort. ClusterIp and Loadbalancer. NodePort were the service makes an internal POD accessible on a Port on the Node and they range from 30000-32767 by default.. The second is ClusterIP – and in this case the service creates a virtual IP inside the cluster to enable communication between different services such as a set of front-end servers to a set of backendservers. The third type is a LoadBalancer, were it provisions a load balancer for our service in supported cloud providers.
 
 ![Screen Shot 2023-01-21 at 4 25 46 PM](https://user-images.githubusercontent.com/74343792/213887715-2e353de0-e2ae-4bad-b03e-b0de2bbc5ad1.png)
 
