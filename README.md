@@ -254,7 +254,10 @@ What if for some reason, our application crashes and the POD fails? Users will n
 Another reason we need replication controller is to create multiple PODs to share the load across them. For example, in this simple scenario we have a single POD serving a set of users. When the number of users increase we deploy additional POD to balance the load across the two pods. If the demand further increases and If we were to run out of resources on the first node, we could deploy additional PODs across other nodes in the cluster. As you can see, the replication controller spans across multiple nodes in the cluster. It helps us balance the load across multiple pods on different nodes as well as scale our application when the demand increases.
 
 The replication controller and Replica set are the same with everything said above. But there are minor difference in the way each of them works. 
-The main difference is the selector. It is anly required in ReplicaSet. The The selector section helps the replicaset identify what pods fall under it i.e replica set can ALSO manage pods that were not created as part of the eplicaset creation. Say for example, there were pods created BEFORE the creation of the ReplicaSet that match the labels specified in the selector, the replica set will also take THOSE pods into consideration when creating the replicas.
+The main difference is the selector. It is anly required in ReplicaSet. The The selector section helps the replicaset identify what pods fall under it i.e replica set can ALSO manage pods that were not created as part of the eplicaset creation. Say for example, there were pods created before the creation of the ReplicaSet that match the labels specified in the selector, the replica set will also take THOSE pods into consideration when creating the replicas.
+
+Two ways pods can be scaled: Imperative and Declarative
+Imperative method is by running a command on the CLI(kubectl scale --replicas 5 replicaset nginx-rs) and Declarative method is done by editing the rs.yaml manifest and changing to the desired number of replicas and applying the update
 
 ```
 kubectl create -f replicaset-definition.yml  - used to create a replca set
